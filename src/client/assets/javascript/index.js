@@ -36,6 +36,12 @@ function setupClickHandlers() {
 	document.addEventListener('click', function(event) {
 		const { target } = event
 
+		// MY CODE >
+		console.log(`click happend`)
+		console.log(target);
+		// END OF MY CODE >
+
+
 		// Race track form field
 		if (target.matches('.card.track')) {
 			handleSelectTrack(target)
@@ -75,9 +81,12 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView())
+	// renderAt('#race', renderRaceStartView())
+	renderAt('#race', renderRaceStartView(store.track_id))
 
 	// TODO - Get player_id and track_id from the store
+	const track = store.track_id;
+	const player = store.player_id;
 
 	// const race = TODO - invoke the API call to create the race, then save the result
 
@@ -145,6 +154,8 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
+	store.player_id = target.id;
+	// console.log(store);
 }
 
 function handleSelectTrack(target) {
@@ -160,6 +171,8 @@ function handleSelectTrack(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected track id to the store
+	store.track_id = target.id;
+	// console.log(store);
 
 }
 
@@ -252,7 +265,16 @@ function renderCountdown(count) {
 	`
 }
 
-function renderRaceStartView(track, racers) {
+// function renderRaceStartView(track, racers) {
+
+	// MY CODE >
+function renderRaceStartView(track) {
+	console.log('in renderRaceStartView');
+	console.log(track)
+	console.log(racers)
+	// END OF MY CODE >
+
+
 	return `
 		<header>
 			<h1>Race: ${track.name}</h1>
@@ -314,6 +336,12 @@ function raceProgress(positions) {
 }
 
 function renderAt(element, html) {
+
+	// MY CODE >
+	console.log(`in render at`)
+	console.log(html)
+	// END OF MY CODE >
+
 	const node = document.querySelector(element)
 
 	node.innerHTML = html
