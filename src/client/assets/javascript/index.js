@@ -89,12 +89,7 @@ async function handleCreateRace() {
 	const player = store.player_id;
 
 	// const race = TODO - invoke the API call to create the race, then save the result
-	race = await createRace(player, track)
-		// .then(res => {
-		// 	console.log(`response from createRace: `)
-		// 	console.log(res)
-		// 	return res
-		// });
+	race = await createRace(player, track);
 
 	console.log(`race created`)
 	console.log(race)
@@ -105,8 +100,11 @@ async function handleCreateRace() {
 
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
+	await runCountdown();
 
 	// TODO - call the async function startRace
+	startRace(race.ID);
+
 
 	// TODO - call the async function runRace
 }
@@ -133,6 +131,12 @@ function runRace(raceID) {
 }
 
 async function runCountdown() {
+
+	// MY CODE >
+	// console.log(`in RunCountdown`)
+	// END OF MY CODE >
+
+
 	try {
 		// wait for the DOM to load
 		await delay(1000)
@@ -140,12 +144,12 @@ async function runCountdown() {
 
 		return new Promise(resolve => {
 			// TODO - use Javascript's built in setInterval method to count down once per second
-
-			// run this DOM manipulation to decrement the countdown for the user
-			document.getElementById('big-numbers').innerHTML = --timer
-
+			const intervalId = window.setInterval( () => {
+				// run this DOM manipulation to decrement the countdown for the user
+				document.getElementById('big-numbers').innerHTML = --timer; }, 1000);
 			// TODO - if the countdown is done, clear the interval, resolve the promise, and return
-
+			setTimeout(clearInterval, 3200, intervalId);
+			resolve();
 		})
 	} catch(error) {
 		console.log(error);
@@ -180,11 +184,8 @@ function handleSelectTrack(target) {
 
 	// add class selected to current target
 	target.classList.add('selected')
-
 	// TODO - save the selected track id to the store
 	store.track_id = target.id;
-	// console.log(store);
-
 }
 
 function handleAccelerate() {
