@@ -37,8 +37,8 @@ function setupClickHandlers() {
 		const { target } = event
 
 		// MY CODE >
-		console.log(`click happend`)
-		console.log(target);
+		// console.log(`click happend`)
+		// console.log(target);
 		// END OF MY CODE >
 
 
@@ -89,8 +89,19 @@ async function handleCreateRace() {
 	const player = store.player_id;
 
 	// const race = TODO - invoke the API call to create the race, then save the result
+	race = await createRace(player, track)
+		// .then(res => {
+		// 	console.log(`response from createRace: `)
+		// 	console.log(res)
+		// 	return res
+		// });
+
+	console.log(`race created`)
+	console.log(race)
 
 	// TODO - update the store with the race id
+	store.race_id = race.ID;
+	console.log(store)
 
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
@@ -269,9 +280,9 @@ function renderCountdown(count) {
 
 	// MY CODE >
 function renderRaceStartView(track) {
-	console.log('in renderRaceStartView');
-	console.log(track)
-	console.log(racers)
+	// console.log('in renderRaceStartView');
+	// console.log(track)
+	// console.log(racers)
 	// END OF MY CODE >
 
 
@@ -338,8 +349,8 @@ function raceProgress(positions) {
 function renderAt(element, html) {
 
 	// MY CODE >
-	console.log(`in render at`)
-	console.log(html)
+	// console.log(`in render at`)
+	// console.log(html)
 	// END OF MY CODE >
 
 	const node = document.querySelector(element)
@@ -395,6 +406,12 @@ async function getRacers() {
 
 
 function createRace(player_id, track_id) {
+
+	// MY CODE >
+	console.log(`In createRace`)
+	// END OF MY CODE >
+
+
 	player_id = parseInt(player_id)
 	track_id = parseInt(track_id)
 	const body = { player_id, track_id }
