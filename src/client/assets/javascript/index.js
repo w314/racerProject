@@ -49,7 +49,7 @@ function setupClickHandlers() {
 		// Submit create race form
 		if (target.matches('#submit-create-race')) {
 			event.preventDefault()
-	
+
 			// start race
 			handleCreateRace()
 		}
@@ -78,7 +78,7 @@ async function handleCreateRace() {
 	renderAt('#race', renderRaceStartView())
 
 	// TODO - Get player_id and track_id from the store
-	
+
 	// const race = TODO - invoke the API call to create the race, then save the result
 
 	// TODO - update the store with the race id
@@ -95,13 +95,13 @@ function runRace(raceID) {
 	return new Promise(resolve => {
 	// TODO - use Javascript's built in setInterval method to get race info every 500ms
 
-	/* 
+	/*
 		TODO - if the race info status property is "in-progress", update the leaderboard by calling:
 
 		renderAt('#leaderBoard', raceProgress(res.positions))
 	*/
 
-	/* 
+	/*
 		TODO - if the race info status property is "finished", run the following:
 
 		clearInterval(raceInterval) // to stop the interval from repeating
@@ -160,7 +160,7 @@ function handleSelectTrack(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected track id to the store
-	
+
 }
 
 function handleAccelerate() {
@@ -172,6 +172,12 @@ function handleAccelerate() {
 // Provided code - do not remove
 
 function renderRacerCars(racers) {
+
+	// MY CODE >
+	// console.log('in renderCards')
+	// console.log(racers);
+	// < END MY CODE
+
 	if (!racers.length) {
 		return `
 			<h4>Loading Racers...</4>
@@ -182,12 +188,19 @@ function renderRacerCars(racers) {
 
 	return `
 		<ul id="racers">
-			${reuslts}
+			${results}
 		</ul>
 	`
 }
 
 function renderRacerCard(racer) {
+
+	// MY CODE >
+	// console.log('in renderCard')
+	// console.log(racer);
+	// < END MY CODE
+
+
 	const { id, driver_name, top_speed, acceleration, handling } = racer
 
 	return `
@@ -201,6 +214,12 @@ function renderRacerCard(racer) {
 }
 
 function renderTrackCards(tracks) {
+
+	// MY CODE >
+	// console.log('in renderTrackCards')
+	// console.log(tracks);
+	// < END MY CODE
+
 	if (!tracks.length) {
 		return `
 			<h4>Loading Tracks...</4>
@@ -317,21 +336,41 @@ function defaultFetchOpts() {
 	}
 }
 
-// TODO - Make a fetch call (with error handling!) to each of the following API endpoints 
-
-function getTracks() {
+// TODO - Make a fetch call (with error handling!) to each of the following API endpoints
+async function getTracks() {
 	// GET request to `${SERVER}/api/tracks`
+	// console.log("in gettracks")
+	try {
+		const tracks =  await fetch(`${SERVER}/api/tracks`)
+			.then(res => res.json());
+		return tracks;
+	} catch (error) {
+		console.log(`Problem fetching tracks from server :: ${error.message}`);
+		console.log(error);
+	}
 }
 
-function getRacers() {
+async function getRacers() {
 	// GET request to `${SERVER}/api/cars`
+	// console.log("in getRacers")
+	try {
+		const racers =  await fetch(`${SERVER}/api/cars`)
+			.then(res => res.json());
+		// console.log(`racers fetched`);
+		// console.log(racers);
+		return racers;
+	} catch (error) {
+		console.log(`Problem fetching tracks from server :: ${error.message}`);
+		console.log(error);
+	}
 }
+
 
 function createRace(player_id, track_id) {
 	player_id = parseInt(player_id)
 	track_id = parseInt(track_id)
 	const body = { player_id, track_id }
-	
+
 	return fetch(`${SERVER}/api/races`, {
 		method: 'POST',
 		...defaultFetchOpts(),
