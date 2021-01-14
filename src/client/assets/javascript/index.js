@@ -104,6 +104,7 @@ async function handleCreateRace() {
 		const race = await createRace(playerId, trackId);
 
 		// TODO - update the store with the race id
+		console.log(`created race with ID : ${race.ID}`);
 		store.race_id = race.ID;
 
 		// The race has been created, now start the countdown
@@ -157,28 +158,23 @@ function runRace(raceID) {
 
 async function runCountdown() {
 
-	try {
-		// wait for the DOM to load
-		await delay(1000)
-		let timer = 3
-
-		return new Promise(resolve => {
-			// TODO - use Javascript's built in setInterval method to count down once per second
-			const countDownInterval = window.setInterval( () => {
-				// run this DOM manipulation to decrement the countdown for the user
-				document.getElementById('big-numbers').innerHTML = --timer;
-				// TODO - if the countdown is done, clear the interval, resolve the promise, and return
-				console.log(`timer: ${timer}`);
-				if (timer === 0) {
-					(console.log('time to clear interval'))
-					clearInterval(countDownInterval);
+	// wait for the DOM to load
+	await delay(1000)
+	let timer = 3
+	// udacity code:
+	// TODO - use Javascript's built in setInterval method to count down once per second
+	return new Promise(resolve => {
+		const countDownInterval = window.setInterval( () => {
+			// run this DOM manipulation to decrement the countdown for the user
+			document.getElementById('big-numbers').innerHTML = --timer;
+			// TODO - if the countdown is done, clear the interval, resolve the promise, and return
+			if (timer === 0) {
+				clearInterval(countDownInterval);
+				resolve();
 				}
-			}, 1000);
-			resolve();
-		})
-	} catch(error) {
-		console.log(error);
-	}
+		}, 1000);
+	})
+	.catch(err => `Problem with runCountdown :: ${err}`);
 }
 
 function handleSelectPodRacer(target) {
