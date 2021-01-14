@@ -21,11 +21,13 @@ body {
 }
 
 header {
-  background-image: url('https://via.placeholder.com/1150');
+  /*background-image: url('https://via.placeholder.com/1150');*/
+  background-color: gray;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  height: 100vh;
+  /*height: 100vh;*/
+  height: 30vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -98,7 +100,8 @@ footer {
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   header {
-    height: 100vh;
+    /*height: 100vh;*/
+    height: 35vh;
   }
 }
 
@@ -106,7 +109,8 @@ footer {
 
 @media (min-width: 1224px) {
   header {
-    height: 700px;
+    /*height: 700px;*/
+    height: 200px;
   }
 }
 
@@ -114,6 +118,7 @@ footer {
 
 @media (min-width: 1824px) {
   header {
-    height: 700px;
+    /*height: 700px;*/
+    height: 200px;
   }
 }

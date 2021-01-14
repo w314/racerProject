@@ -80,38 +80,90 @@ async function delay(ms) {
 
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
-	// render starting UI
-	// renderAt('#race', renderRaceStartView())
-	renderAt('#race', renderRaceStartView(store.track_id))
 
 	// TODO - Get player_id and track_id from the store
-	const track = store.track_id;
-	const player = store.player_id;
+	const playerId = store.player_id;
+	const trackId = store.track_id;
+
+	// get track information for rendering starting UI
+	try {
+		// fetch all tracks
+		const tracks = await getTracks();
+		console.log(`tracks are:`)
+		console.log(tracks);
+		// get current track id from store
+		// get information of current track from tracks
+		const track = tracks.filter(track => track.id === parseInt(trackId, 10))[0];
+		console.log(track);
+		// render starting UI
+		renderAt('#race', renderRaceStartView(track))
+	} catch(err) {console.log(`Problem with getting tracks in handleCreateRace :: ${err}`)}
+
+
 
 	// const race = TODO - invoke the API call to create the race, then save the result
-	race = await createRace(player, track);
+	try {
+		const race = await createRace(playerId, trackId);
 
-	console.log(`race created`)
-	console.log(race)
+		// console.log(`race created`)
+		// console.log(race)
 
-	// TODO - update the store with the race id
-	store.race_id = race.ID;
-	console.log(store)
-
-	// The race has been created, now start the countdown
-	// TODO - call the async function runCountdown
-	await runCountdown();
-
-	// TODO - call the async function startRace
-	startRace(race.ID);
+		// TODO - update the store with the race id
+		store.race_id = race.ID;
+		// console.log(store)
 
 
-	// TODO - call the async function runRace
+		// The race has been created, now start the countdown
+		// TODO - call the async function runCountdown
+		// await runCountdown();
+
+		// TODO - call the async function startRace
+		// CALLING startRace with race.ID -1 PER UDACITY MENTOR HELP
+		await startRace(race.ID-1);
+
+
+		// TODO - call the async function runRace
+		runRace(race.ID-1)
+	} catch(err) {
+		console.log(`Problem with handleCreateRace :: ${err}`)
+	}
 }
 
+
 function runRace(raceID) {
+
+	console.log(`in runRace, race ID: ${raceID}`)
+	getRace(raceID)
+	// .then(race => {
+	// 	if (race.status === 'in-progress') {
+	// 		// console.log(race.positions);
+	// 		renderAt('#leaderBoard', raceProgress(race.positions));
+	// 	} else if(race.status === 'finished') {
+	// 		console.log(`race finished`)
+	// 	}
+	// })
+
 	return new Promise(resolve => {
 	// TODO - use Javascript's built in setInterval method to get race info every 500ms
+		const raceInterval = window.setInterval(() => {
+			getRace(raceID)
+			.then(race => {
+				console.log(`race status: ${race.status}`)
+				if (race.status === 'in-progress') {
+					console.log(race.positions);
+					renderAt('#leaderBoard', raceProgress(race.positions));
+				} else if(race.status === 'finished') {
+					console.log(`race finished`)
+					clearInterval(raceInterval);
+					renderAt('#race', resultsView(race.positions)) // to render the results view
+					resolve() // resolve the promise
+					// resolve()
+				}
+			})
+		}, 500)
+		// setTimeout(clearInterval, 120000, raceInterval);
+		// .catch(err => console.log(`Problem with runRace :: ${err}`))
+
 
 	/*
 		TODO - if the race info status property is "in-progress", update the leaderboard by calling:
@@ -127,6 +179,7 @@ function runRace(raceID) {
 		reslove(res) // resolve the promise
 	*/
 	})
+	.catch(err => console.log(`Problems with running race :: ${err}`))
 	// remember to add error handling for the Promise
 }
 
@@ -188,9 +241,10 @@ function handleSelectTrack(target) {
 	store.track_id = target.id;
 }
 
-function handleAccelerate() {
-	console.log("accelerate button clicked")
+async function handleAccelerate() {
+	// console.log("accelerate button clicked")
 	// TODO - Invoke the API call to accelerate
+	await accelerate(store.race_id-1)
 }
 
 // HTML VIEWS ------------------------------------------------
@@ -321,7 +375,23 @@ function resultsView(positions) {
 }
 
 function raceProgress(positions) {
-	let userPlayer = positions.find(e => e.id === store.player_id)
+
+	// MY CODE >
+	// console.log(`In raceProgress, with positions:`)
+	// console.log(positions)
+	// END OF MY CODE >
+
+	// UDACITY CODE
+	// let userPlayer = positions.find(e => e.id === store.player_id)
+	// HAD TO CHANGE TO:
+	let userPlayer = positions.find(e => e.id.toString() === store.player_id)
+
+	// MY CODE >
+	// console.log(`store and found userPlayer:`)
+	// console.log(store)
+	// console.log(userPlayer)
+	// END OF MY CODE >
+
 	userPlayer.driver_name += " (you)"
 
 	positions = positions.sort((a, b) => (a.segment > b.segment) ? -1 : 1)
@@ -428,20 +498,53 @@ function createRace(player_id, track_id) {
 }
 
 function getRace(id) {
+
+	// MY CODE >
+	// console.log(`in getRace with race ID: ${id}`)
+	// END OF MY CODE >
+
 	// GET request to `${SERVER}/api/races/${id}`
+	return fetch(`${SERVER}/api/races/${id}`)
+	.then(res => res.json())
+	.catch(err => console.log(`Problem with getting race :: ${err}`));
+
 }
 
 function startRace(id) {
+
+	// MY CODE >
+	console.log(`in startRace, race ID: ${id}`)
+	// END OF MY CODE >
+
+
 	return fetch(`${SERVER}/api/races/${id}/start`, {
 		method: 'POST',
 		...defaultFetchOpts(),
 	})
-	.then(res => res.json())
+	// .then(res => res.json())
+	.then(res => {
+		// console.log(res);
+		return res})
 	.catch(err => console.log("Problem with getRace request::", err))
 }
 
 function accelerate(id) {
+
+	// MY CODE >
+	// console.log(`In accelerate with race ID: ${id}`)
+	// END OF MY CODE >
+
 	// POST request to `${SERVER}/api/races/${id}/accelerate`
 	// options parameter provided as defaultFetchOpts
 	// no body or datatype needed for this request
+	return fetch(`${SERVER}/api/races/${id}/accelerate`, {
+		method: 'POST',
+		...defaultFetchOpts(),
+	})
+	.then(res => {
+		// console.log(res);
+		// console.log(res.json())
+		return res;
+	})
+	.catch(error => console.log(`Problem with accelerate: ${error}`));
 }
