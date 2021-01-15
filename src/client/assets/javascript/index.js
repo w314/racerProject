@@ -36,6 +36,20 @@ function setupClickHandlers() {
 	document.addEventListener('click', function(event) {
 		const { target } = event
 
+
+		// Added to improve track and racer selection
+		const parent = target.parentElement;
+
+		if (parent.matches('.card.track')) {
+			handleSelectTrack(parent);
+		}
+
+		if (parent.matches('.card.podracer')) {
+			handleSelectPodRacer(parent);
+		}
+		// End of added code
+
+
 		// Race track form field
 		if (target.matches('.card.track')) {
 			handleSelectTrack(target)
