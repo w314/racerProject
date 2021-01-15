@@ -14,22 +14,41 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 async function onPageLoad() {
-	try {
-		getTracks()
-			.then(tracks => {
-				const html = renderTrackCards(tracks)
-				renderAt('#tracks', html)
-			})
+	// try {
+	// 	getTracks()
+	// 		.then(tracks => {
+	// 			console.log(tracks)
+	// 			const html = renderTrackCards(tracks)
+	// 			renderAt('#tracks', html)
+	// 		})
 
-		getRacers()
-			.then((racers) => {
-				const html = renderRacerCars(racers)
-				renderAt('#racers', html)
-			})
-	} catch(error) {
-		console.log("Problem getting tracks and racers ::", error.message)
-		console.error(error)
-	}
+	// 	getRacers()
+	// 		.then((racers) => {
+	// 			console.log(racers)
+	// 			const html = renderRacerCars(racers)
+	// 			renderAt('#racers', html)
+	// 		})
+	// } catch(error) {
+	// 	console.log("Problem getting tracks and racers ::", error.message)
+	// 	console.error(error)
+	// }
+
+	const tracksPromise = getTracks();
+	const racersPromise = getRacers();
+
+	Promise.all([tracksPromise, racersPromise])
+	.then(values => {
+		const tracks = values[0];
+		const htmlTracks = renderTrackCards(tracks);
+		renderAt('#tracks', htmlTracks);
+		const racers = values[1];
+		const htmlRacers = renderRacerCars(racers);
+		renderAt('#racers', htmlRacers);
+	})
+	.catch(error => {
+		console.log(`Failure in getting tracks and cars`)
+		console.log(error);
+	})
 }
 
 function setupClickHandlers() {
