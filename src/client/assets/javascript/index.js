@@ -95,8 +95,10 @@ async function handleCreateRace() {
 		// get information of current track from tracks
 		const track = tracks.filter(track => track.id === parseInt(trackId, 10))[0];
 		// render starting UI
-		renderAt('#race', renderRaceStartView(track))
-	} catch(err) {console.log(`Problem with getting tracks in handleCreateRace :: ${err}`)}
+		renderAt('#race', renderRaceStartView(track));
+	} catch(err) {
+		console.log(`Problem with getting tracks in handleCreateRace :: ${err}`)
+	}
 
 
 	// const race = TODO - invoke the API call to create the race, then save the result
@@ -116,9 +118,9 @@ async function handleCreateRace() {
 		await startRace(race.ID-1);
 
 		// TODO - call the async function runRace
-		runRace(race.ID-1)
+		runRace(race.ID-1);
 	} catch(err) {
-		console.log(`Problem with handleCreateRace :: ${err}`)
+		console.log(`Problem with handleCreateRace :: ${err}`);
 	}
 }
 
@@ -145,15 +147,14 @@ function runRace(raceID) {
 						reslove(res) // resolve the promise
 					*/
 					clearInterval(raceInterval);
-					renderAt('#race', resultsView(race.positions)) // to render the results view
+					renderAt('#race', resultsView(race.positions)); // to render the results view
 					// resolve the promise
 					resolve()
 				}
 			})
 		}, 500)
-	})
 	// remember to add error handling for the Promise
-	.catch(err => console.log(`Problems with running race :: ${err}`))
+	}).catch(err => console.log(`Problems with running race :: ${err}`));
 }
 
 async function runCountdown() {
@@ -173,8 +174,7 @@ async function runCountdown() {
 				resolve();
 				}
 		}, 1000);
-	})
-	.catch(err => `Problem with runCountdown :: ${err}`);
+	}).catch(err => console.log(`Problems with runCountdown :: ${err}`));
 }
 
 function handleSelectPodRacer(target) {
@@ -394,8 +394,6 @@ async function getRacers() {
 	try {
 		const racers =  await fetch(`${SERVER}/api/cars`)
 			.then(res => res.json());
-		// console.log(`racers fetched`);
-		// console.log(racers);
 		return racers;
 	} catch (error) {
 		console.log(`Problem fetching tracks from server :: ${error.message}`);
